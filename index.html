@@ -339,33 +339,38 @@
     </div>
 
     <script>
-       // --- ЛОГИКА АВТОРИЗАЦИИ (SUPABASE) ---
-        function toggleAuthMode() {
-            Sfx.play('click');
-            isSignUpMode = !isSignUpMode;
-            const card = document.querySelector('.auth-card');
-            if (isSignUpMode) {
-                document.getElementById('auth-title').textContent = "Регистрация";
-                document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-purple)";
-                card.style.borderColor = "var(--neon-purple)";
-                document.getElementById('auth-subtitle').textContent = "Создание новой ячейки в базе данных";
-                document.getElementById('auth-submit-btn').textContent = "Зарегистрироваться";
-                document.getElementById('auth-toggle').innerHTML = "Уже есть аккаунт? <span>Войти в сеть</span>";
-            } else {
-                document.getElementById('auth-title').textContent = "Вход в систему";
-                document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-blue)";
-                card.style.borderColor = "var(--neon-border)";
-                document.getElementById('auth-subtitle').textContent = "Получение доступа к квантовым грядкам";
-                document.getElementById('auth-submit-btn').textContent = "Войти в сеть";
-                document.getElementById('auth-toggle').innerHTML = "Нет аккаунта? <span>Создать профиль</span>";
-            }
-        }
-        
-        // --- КОНФИГУРАЦИЯ SUPABASE ---
-        const SUPABASE_URL = "https://diwjvaukhyjcyvyrbmhg.supabase.co/rest/v1/";
-        const SUPABASE_KEY = "sb_publishable_4m367C496__Kx0wwcBmMUQ_vG05ySuz";
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+     // --- КОНФИГУРАЦИЯ SUPABASE ---
+const SUPABASE_URL = "https://diwjvaukhyjcyvyrbmhg.supabase.co/rest/v1/"; // Вставь свой URL
+const SUPABASE_KEY = "sb_publishable_4m367C496__Kx0wwcBmMUQ_vG05ySuz"; // Вставь свой длинный Publishable ключ
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// --- ЛОГИКА ИНТЕРФЕЙСА ---
+let isSignUpMode = false;
+
+// Привязываем функцию к window, чтобы кнопка 100% её увидела при клике
+window.toggleAuthMode = function() {
+    isSignUpMode = !isSignUpMode;
+    const card = document.querySelector('.auth-card');
+    
+    if (isSignUpMode) {
+        document.getElementById('auth-title').textContent = "Регистрация";
+        document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-purple)";
+        if(card) card.style.borderColor = "var(--neon-purple)";
+        document.getElementById('auth-subtitle').textContent = "Создание новой ячейки в базе данных";
+        document.getElementById('auth-submit-btn').textContent = "Зарегистрироваться";
+        document.getElementById('auth-toggle').innerHTML = "Уже есть аккаунт? <span>Войти в сеть</span>";
+    } else {
+        document.getElementById('auth-title').textContent = "Вход в систему";
+        document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-blue)";
+        if(card) card.style.borderColor = "var(--neon-blue)";
+        document.getElementById('auth-subtitle').textContent = "Получение доступа к квантовым грядкам";
+        document.getElementById('auth-submit-btn').textContent = "Войти в сеть";
+        document.getElementById('auth-toggle').innerHTML = "Нет аккаунта? <span>Создать профиль</span>";
+    }
+};
+
+// ... здесь остаётся твоя дальнейшая логика авторизации и экономики (в долларах $)
 
         let isSignUpMode = false;
         let currentUser = null;
