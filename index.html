@@ -464,9 +464,20 @@
     <input class="auth-input" id="auth-password" type="password" placeholder="ПАРОЛЬ (мин. 6 символов)"/>
 
     <!-- Кнопка вызывает window.handleAuth() -->
-    <button class="btn-primary" onclick="window.handleAuth()">
-      <i class="fa fa-bolt"></i>&nbsp; <span id="auth-btn-label">СОЗДАТЬ АККАУНТ</span>
-    </button>
+    <button id="signup-btn">Создать аккаунт</button>
+
+<script>
+document.getElementById('signup-btn').addEventListener('click', async () => {
+    console.log("Кнопка нажата, выполняем вход...");
+    const email = document.getElementById('email-input').value; // укажите ID вашего поля
+    const password = document.getElementById('password-input').value; // укажите ID поля
+    
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) console.error("Ошибка:", error);
+    else console.log("Успех!", data);
+});
+</script>
+    
 
     <div id="auth-error"></div>
 
