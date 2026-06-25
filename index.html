@@ -545,8 +545,9 @@
 const SUPABASE_URL = 'https://diwjvaukhyjcyvyrbmhg.supabase.co';      // пример: https://xxxx.supabase.co
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpd2p2YXVraHlqY3l2eXJibWhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzc5MzQsImV4cCI6MjA5Nzk1MzkzNH0.jjAe5fQ0fjp-LJezxnERh7nvk4ZuQJwnBNOgHg_oLRs'; // anon/public ключ
 
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+// Создаем экземпляр клиента
+const supabase = window.supabase.createClient('https://diwjvaukhyjcyvyrbmhg.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpd2p2YXVraHlqY3l2eXJibWhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzc5MzQsImV4cCI6MjA5Nzk1MzkzNH0.jjAe5fQ0fjp-LJezxnERh7nvk4ZuQJwnBNOgHg_oLRs');
+  
 /* ==============================================================
    ПАРАМЕТРЫ СЕМЯН
    ─────────────────────────────────────────────────────────────
