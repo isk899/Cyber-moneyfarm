@@ -632,7 +632,7 @@ window.handleAuth = async function () {
   errEl.textContent = '';
 
   if (!email || !password) {
-    errEl.textContent = '⚠ Заполни email и пароль';
+    errEl.textContent = '⚠ ' + (error.message || JSON.stringify(error));
     return;
   }
 
