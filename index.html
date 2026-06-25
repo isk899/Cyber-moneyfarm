@@ -4,89 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MONEY CYBER-FARM | Cloud Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-main: #020408;
             --panel-bg: rgba(6, 10, 18, 0.95);
+            --panel-border: #1e293b;
+            --neon-green: #00ff66;
             --neon-blue: #00f0ff;
-            --neon-purple: #b026ff;
             --neon-gold: #ffd700;
             --neon-red: #ff0055;
+            --neon-purple: #b026ff;
+            --soil-dark: #160b05;
+            --soil-light: #3d2110;
             --text-main: #e2e8f0;
         }
 
-        * { box-sizing: border-box; user-select: none; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; user-select: none; }
 
         body {
             background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(176, 38, 255, 0.08), transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(0, 240, 255, 0.08), transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
             color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, sans-serif;
             margin: 0; padding: 20px; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- СТИЛИ АВТОРИЗАЦИИ --- */
+        /* --- ОКНО АВТОРИЗАЦИИ (РЕГИСТРАЦИЯ ПЕРВОЙ) --- */
         #auth-container {
             display: flex; justify-content: center; align-items: center; 
-            height: 80vh; width: 100%;
+            min-height: 85vh; width: 100%;
         }
 
         .auth-card {
-            background: var(--panel-bg); border: 2px solid var(--neon-purple); /* Фиолетовый по умолчанию для регистрации */
-            border-radius: 16px; padding: 40px; width: 100%; max-width: 400px;
-            text-align: center; box-shadow: 0 0 30px rgba(176, 38, 255, 0.2);
-            transition: all 0.3s ease;
+            background: var(--panel-bg); border: 2px solid var(--neon-purple);
+            border-radius: 16px; padding: 40px; width: 100%; max-width: 420px;
+            text-align: center; box-shadow: 0 0 35px rgba(176, 38, 255, 0.25);
+            transition: all 0.3s ease; backdrop-filter: blur(10px);
         }
 
         .auth-card h2 {
             margin: 0 0 10px 0; color: #fff; text-shadow: 0 0 15px var(--neon-purple);
-            text-transform: uppercase; letter-spacing: 2px;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 28px;
         }
 
         .auth-card p { color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
 
         .auth-input {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #334155;
-            color: #fff; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px;
-            outline: none; transition: 0.3s;
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid #334155;
+            color: #fff; padding: 14px 16px; border-radius: 10px; margin-bottom: 16px;
+            outline: none; transition: 0.3s; font-size: 15px;
         }
-        .auth-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
+        .auth-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 12px rgba(0,240,255,0.25); }
 
         .auth-btn {
             width: 100%; background: rgba(176, 38, 255, 0.1); border: 1px solid var(--neon-purple);
-            color: #fff; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+            color: #fff; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; font-size: 14px;
         }
-        .auth-btn:hover { background: var(--neon-purple); box-shadow: 0 0 20px rgba(176, 38, 255, 0.5); }
+        .auth-btn:hover { background: var(--neon-purple); box-shadow: 0 0 25px rgba(176, 38, 255, 0.5); transform: translateY(-1px); }
 
-        .auth-toggle {
-            margin-top: 20px; font-size: 14px; color: #94a3b8; cursor: pointer; transition: 0.2s;
-        }
-        .auth-toggle span { color: var(--neon-blue); font-weight: bold; text-decoration: none; }
+        .auth-toggle { margin-top: 22px; font-size: 14px; color: #94a3b8; cursor: pointer; }
+        .auth-toggle span { color: var(--neon-blue); font-weight: bold; }
         .auth-toggle:hover span { text-shadow: 0 0 10px var(--neon-blue); }
 
-        /* --- СТИЛИ ИГРЫ --- */
-        #game-container { width: 100%; max-width: 1000px; display: none; }
-        
+        /* --- ИНТЕРФЕЙС ИГРЫ --- */
+        #game-container { width: 100%; max-width: 1300px; display: none; }
+
         header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #1e293b; padding-bottom: 20px; margin-bottom: 20px;
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(30, 41, 59, 0.7);
         }
-        
-        .brand h1 { margin: 0; color: var(--neon-gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        .hud { display: flex; gap: 15px; }
+
+        .brand h1 {
+            margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
+            background: linear-gradient(90deg, var(--neon-gold), #ff6600);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hud-controls { display: flex; align-items: center; gap: 14px; }
+
         .hud-box {
-            background: var(--panel-bg); border: 1px solid #1e293b;
-            padding: 10px 20px; border-radius: 12px; font-weight: bold;
+            background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05);
+            padding: 8px 18px; border-radius: 12px; font-size: 15px; font-weight: 800;
+            display: flex; align-items: center; gap: 10px; height: 44px;
         }
-        .box-balance { color: var(--neon-gold); border-color: rgba(255,215,0,0.3); }
-        .btn-logout { 
-            background: transparent; border: 1px solid var(--neon-red); 
-            color: var(--neon-red); padding: 10px 20px; border-radius: 8px; cursor: pointer;
-        }
-        .btn-logout:hover { background: var(--neon-red); color: #fff; }
         
-        .game-area { display: flex; justify-content: center; align-items: center; height: 50vh; color: #64748b; }
+        .box-balance { color: var(--neon-gold); border-color: rgba(255,215,0,0.3); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+        .box-crystals { color: var(--neon-blue); border-color: rgba(0,240,255,0.3); box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
+        
+        .btn-logout {
+            background: rgba(255, 0, 85, 0.05); border: 1px solid var(--neon-red); color: var(--neon-red);
+            padding: 0 18px; border-radius: 12px; font-weight: 800; cursor: pointer; height: 44px;
+            text-transform: uppercase; font-size: 12px; transition: 0.2s;
+        }
+        .btn-logout:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); }
+
+        /* ИГРОВАЯ ЗОНА */
+        .game-viewport { display: grid; grid-template-columns: 350px 1fr; gap: 25px; width: 100%; }
+
+        /* МАГАЗИН СЕМЯН */
+        .seeds-shop { 
+            background: var(--panel-bg); border: 1px solid var(--panel-border); 
+            border-radius: 18px; padding: 20px; height: 650px; overflow-y: auto; 
+        }
+        .seeds-shop h2 { margin: 0 0 15px 0; font-size: 16px; text-transform: uppercase; color: #64748b; letter-spacing: 1px; }
+
+        .seed-item { 
+            background: rgba(255, 255, 255, 0.02); border: 1px solid #1e293b; 
+            border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .seed-item:hover { border-color: var(--neon-blue); background: rgba(0, 240, 255, 0.02); }
+        .seed-item.active { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.04); }
+        .seed-name { font-weight: 800; color: #fff; font-size: 16px; }
+        .seed-cost { color: var(--neon-gold); font-size: 13px; font-weight: 700; margin-top: 4px; }
+
+        /* ПОЛЕ ГРЯДОК */
+        .farm-grid { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; 
+            background: var(--panel-bg); border: 1px solid var(--panel-border); 
+            border-radius: 18px; padding: 20px; height: 650px;
+        }
+
+        .plot-card { 
+            background: var(--soil-dark); border: 1px solid #2d1a10; border-radius: 14px; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            position: relative; cursor: pointer; transition: 0.2s; padding: 20px;
+        }
+        .plot-card:hover { transform: scale(1.02); border-color: #5c3a21; }
+        
+        .plot-status { font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 700; margin-top: 10px; }
+        .plant-icon { font-size: 40px; color: #475569; transition: 0.3s; }
+        
+        /* Прогресс-бар роста */
+        .growth-progress {
+            width: 80%; height: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; 
+            margin-top: 12px; overflow: hidden; display: none;
+        }
+        .growth-bar { height: 100%; width: 0%; background: var(--neon-green); transition: width 0.5s linear; }
     </style>
 </head>
 <body>
@@ -109,16 +171,67 @@
     <div id="game-container">
         <header>
             <div class="brand">
-                <h1>CYBER-FARM</h1>
+                <h1>MONEY CYBER-FARM</h1>
             </div>
-            <div class="hud">
-                <div class="hud-box box-balance">Баланс: <span id="balance-display">0.00</span> $</div>
-                <button class="btn-logout" onclick="logout()">Выйти из сети</button>
+            <div class="hud-controls">
+                <div class="hud-box box-balance"><i class="fa-solid fa-wallet"></i> <span id="balance-display">100.00</span> $</div>
+                <div class="hud-box box-crystals"><i class="fa-solid fa-gem"></i> <span id="crystals-display">10</span> Кр.</div>
+                <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Выйти</button>
             </div>
         </header>
 
-        <div class="game-area">
-            <h2>Интерфейс фермы загружен. Добро пожаловать!</h2>
+        <div class="game-viewport">
+            <div class="seeds-shop">
+                <h2>Доступные Культуры</h2>
+                <div class="seed-item active" onclick="selectSeed(0, this)">
+                    <div class="seed-name">Квантовый Лук</div>
+                    <div class="seed-cost">Цена: 10.00 $ | Доход: 25.00 $</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 3px;">Рост: 10 сек.</div>
+                </div>
+                <div class="seed-item" onclick="selectSeed(1, this)">
+                    <div class="seed-name">Неоновая Морковь</div>
+                    <div class="seed-cost">Цена: 35.00 $ | Доход: 90.00 $</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 3px;">Рост: 30 сек.</div>
+                </div>
+                <div class="seed-item" onclick="selectSeed(2, this)">
+                    <div class="seed-name">Гипер-Томат</div>
+                    <div class="seed-cost">Цена: 100.00 $ | Доход: 280.00 $</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 3px;">Рост: 1 мин.</div>
+                </div>
+            </div>
+
+            <div class="farm-grid">
+                <div class="plot-card" onclick="interactPlot(0)">
+                    <i class="fa-solid fa-border-all plant-icon" id="icon-0"></i>
+                    <div class="plot-status" id="status-0">Пусто</div>
+                    <div class="growth-progress" id="progress-0"><div class="growth-bar" id="bar-0"></div></div>
+                </div>
+                <div class="plot-card" onclick="interactPlot(1)">
+                    <i class="fa-solid fa-border-all plant-icon" id="icon-1"></i>
+                    <div class="plot-status" id="status-1">Пусто</div>
+                    <div class="growth-progress" id="progress-1"><div class="growth-bar" id="bar-1"></div></div>
+                </div>
+                <div class="plot-card" onclick="interactPlot(2)">
+                    <i class="fa-solid fa-border-all plant-icon" id="icon-2"></i>
+                    <div class="plot-status" id="status-2">Пусто</div>
+                    <div class="growth-progress" id="progress-2"><div class="growth-bar" id="bar-2"></div></div>
+                </div>
+                <div class="plot-card" onclick="interactPlot(3)">
+                    <i class="fa-solid fa-border-all plant-icon" id="icon-3"></i>
+                    <div class="plot-status" id="status-3">Пусто</div>
+                    <div class="growth-progress" id="progress-3"><div class="growth-bar" id="bar-3"></div></div>
+                </div>
+                <div class="plot-card" onclick="interactPlot(4)">
+                    <i class="fa-solid fa-border-all plant-icon" id="icon-4"></i>
+                    <div class="plot-status" id="status-4">Пусто</div>
+                    <div class="growth-progress" id="progress-4"><div class="growth-bar" id="bar-4"></div></div>
+                </div>
+                <div class="plot-card" onclick="interactPlot(5)">
+                    <i class="fa-solid fa-border-all plant-icon" id="icon-5"></i>
+                    <div class="plot-status" id="status-5">Пусто</div>
+                    <div class="growth-progress" id="progress-5"><div class="growth-bar" id="bar-5"></div></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -130,75 +243,157 @@
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // По умолчанию isSignUpMode = true (Регистрация)
+        // Состояние авторизации (Регистрация по умолчанию)
         let isSignUpMode = true; 
 
-        // Функция переключения между Регистрацией и Входом
+        // Игровой баланс локально
+        let playerStats = { balance: 100.00, crystals: 10 };
+        let selectedSeedIndex = 0;
+
+        const seedsData = [
+            { name: "Квантовый Лук", cost: 10, reward: 25, time: 10000, icon: "fa-seedling" },
+            { name: "Неоновая Морковь", cost: 35, reward: 90, time: 30000, icon: "fa-carrot" },
+            { name: "Гипер-Томат", cost: 100, reward: 280, time: 60000, icon: "fa-apple-whole" }
+        ];
+
+        let plots = Array(6).fill(null).map(() => ({ status: "empty", seed: null, timer: null }));
+
+        // Переключение режимов Вход / Регистрация
         window.toggleAuthMode = function() {
             isSignUpMode = !isSignUpMode;
             const card = document.getElementById('auth-card');
             
             if (isSignUpMode) {
-                // Внешний вид для регистрации
                 document.getElementById('auth-title').textContent = "Регистрация";
                 document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-purple)";
                 card.style.borderColor = "var(--neon-purple)";
-                document.getElementById('auth-submit-btn').style.borderColor = "var(--neon-purple)";
+                card.style.boxShadow = "0 0 35px rgba(176, 38, 255, 0.25)";
                 document.getElementById('auth-subtitle').textContent = "Создание новой ячейки в базе данных";
                 document.getElementById('auth-submit-btn').textContent = "Зарегистрироваться";
                 document.getElementById('auth-toggle').innerHTML = "Уже есть аккаунт? <span>Войти в сеть</span>";
             } else {
-                // Внешний вид для входа
                 document.getElementById('auth-title').textContent = "Вход в систему";
                 document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-blue)";
                 card.style.borderColor = "var(--neon-blue)";
-                document.getElementById('auth-submit-btn').style.borderColor = "var(--neon-blue)";
+                card.style.boxShadow = "0 0 35px rgba(0, 240, 255, 0.25)";
                 document.getElementById('auth-subtitle').textContent = "Получение доступа к квантовым грядкам";
-                document.getElementById('auth-submit-btn').textContent = "Войти";
+                document.getElementById('auth-submit-btn').textContent = "Войти в сеть";
                 document.getElementById('auth-toggle').innerHTML = "Нет аккаунта? <span>Создать профиль</span>";
             }
         };
 
-        // Логика авторизации
+        // Обработка клика по кнопке Авторизации
         window.handleAuth = async function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
             if (!email || !password) {
-                alert("Заполните все поля!");
+                alert("Заполните все поля ввода!");
                 return;
             }
 
             if (isSignUpMode) {
                 const { data, error } = await supabase.auth.signUp({ email, password });
-                if (error) alert("Ошибка регистрации: " + error.message);
+                if (error) alert("Ошибка создания аккаунта: " + error.message);
                 else {
-                    alert("Профиль создан! Теперь вы можете войти.");
-                    toggleAuthMode(); // Автоматически переключаем на вход после успешной регистрации
+                    alert("Профиль успешно создан в Supabase! Теперь войдите в сеть.");
+                    toggleAuthMode();
                 }
             } else {
                 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) alert("Ошибка входа: " + error.message);
+                if (error) alert("Ошибка авторизации: " + error.message);
             }
         };
 
-        // Логика выхода
         window.logout = async function() {
             await supabase.auth.signOut();
         };
 
-        // Отслеживание состояния сессии (вошел пользователь или нет)
+        // Отслеживание входа/выхода
         supabase.auth.onAuthStateChange((event, session) => {
             if (session) {
-                // Пользователь авторизован - показываем игру
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('game-container').style.display = 'block';
+                updateUI();
             } else {
-                // Пользователь не авторизован - показываем форму
                 document.getElementById('auth-container').style.display = 'flex';
                 document.getElementById('game-container').style.display = 'none';
             }
         });
+
+        // Экономика и грядки
+        window.selectSeed = function(index, element) {
+            selectedSeedIndex = index;
+            document.querySelectorAll('.seed-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        };
+
+        window.interactPlot = function(id) {
+            let plot = plots[id];
+            let activeSeed = seedsData[selectedSeedIndex];
+
+            if (plot.status === "empty") {
+                if (playerStats.balance >= activeSeed.cost) {
+                    playerStats.balance -= activeSeed.cost;
+                    plot.status = "growing";
+                    plot.seed = activeSeed;
+                    updatePlotUI(id, "growing");
+                    
+                    let bar = document.getElementById(`bar-${id}`);
+                    bar.style.width = "100%";
+                    bar.style.transition = `width ${activeSeed.time}ms linear`;
+
+                    plot.timer = setTimeout(() => {
+                        plot.status = "ready";
+                        updatePlotUI(id, "ready");
+                    }, activeSeed.time);
+
+                    updateUI();
+                } else {
+                    alert("Недостаточно долларов ($) для покупки этих семян!");
+                }
+            } else if (plot.status === "ready") {
+                playerStats.balance += plot.seed.reward;
+                plot.status = "empty";
+                plot.seed = null;
+                updatePlotUI(id, "empty");
+                updateUI();
+            }
+        };
+
+        function updatePlotUI(id, status) {
+            let icon = document.getElementById(`icon-${id}`);
+            let text = document.getElementById(`status-${id}`);
+            let prog = document.getElementById(`progress-${id}`);
+            let bar = document.getElementById(`bar-${id}`);
+
+            if (status === "empty") {
+                icon.className = "fa-solid fa-border-all plant-icon";
+                icon.style.color = "#475569";
+                text.textContent = "Пусто";
+                text.style.color = "#64748b";
+                prog.style.display = "none";
+                bar.style.width = "0%";
+                bar.style.transition = "none";
+            } else if (status === "growing") {
+                icon.className = "fa-solid fa-seedling plant-icon";
+                icon.style.color = "var(--neon-blue)";
+                text.textContent = "Рост...";
+                text.style.color = "var(--neon-blue)";
+                prog.style.display = "block";
+            } else if (status === "ready") {
+                icon.className = plots[id].seed.icon + " plant-icon";
+                icon.style.color = "var(--neon-green)";
+                text.textContent = "Собрать!";
+                text.style.color = "var(--neon-green)";
+                prog.style.display = "none";
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('balance-display').textContent = playerStats.balance.toFixed(2);
+            document.getElementById('crystals-display').textContent = playerStats.crystals;
+        }
     </script>
 </body>
 </html>
