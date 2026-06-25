@@ -872,6 +872,20 @@ function showToast(msg, color = 'var(--neon-green)') {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
 }
 </script>
+<script>
+  // Очищаем старую переменную
+  window.supabase = window.supabase || {};
+  
+  // Создаем клиент заново с явным указанием метода
+  const SUPABASE_URL = 'https://diwjvaukhyjcyvyrbmhg.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpd2p2YXVraHlqY3l2eXJibWhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzc5MzQsImV4cCI6MjA5Nzk1MzkzNH0.jjAe5fQ0fjp-LJezxnERh7nvk4ZuQJwnBNOgHg_oLRs'; 
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  // Проверка: выведет объект в консоль, если всё ок
+  console.log('Клиент Supabase:', supabaseClient);
+</script>
+  
 </body>
 </html>
     }
