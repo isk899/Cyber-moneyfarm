@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBER FARM | Neon Growth</title>
+    <title>MONEY CYBER-FARM | Cloud Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg-main: #020305;
+            --bg-main: #020408;
             --panel-bg: rgba(6, 10, 18, 0.95);
-            --panel-border: #131f33;
+            --panel-border: #1e293b;
             --neon-green: #00ff66;
             --neon-blue: #00f0ff;
             --neon-gold: #ffd700;
             --neon-red: #ff0055;
             --neon-purple: #b026ff;
-            --soil-dark: #170b05;
-            --soil-light: #3d2010;
-            --text-main: #f0f4f8;
+            --soil-dark: #160b05;
+            --soil-light: #3d2110;
+            --soil-wet-dark: #0d1a24;
+            --soil-wet-light: #1a354d;
+            --text-main: #e2e8f0;
         }
 
         * { box-sizing: border-box; user-select: none; }
@@ -25,10 +28,10 @@
         body {
             background-color: var(--bg-main);
             background-image: 
-                radial-gradient(circle at 10% 10%, rgba(0, 240, 255, 0.08), transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(176, 38, 255, 0.08), transparent 40%),
-                linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px);
+                radial-gradient(circle at 15% 15%, rgba(176, 38, 255, 0.12), transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(0, 240, 255, 0.12), transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
             color: var(--text-main);
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -39,25 +42,25 @@
         header {
             width: 100%; max-width: 1300px;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding-bottom: 15px; 
-            border-bottom: 1px solid var(--panel-border);
-            filter: drop-shadow(0 4px 10px rgba(0, 240, 255, 0.03));
+            margin-bottom: 25px; padding-bottom: 20px; 
+            border-bottom: 1px solid rgba(30, 41, 59, 0.7);
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
         }
 
         .brand h1 {
             margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            background: linear-gradient(90deg, var(--neon-gold), #ff6600);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
         .rainbow-text {
-            font-size: 12px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; margin-top: 4px;
-            background: linear-gradient(270deg, #ff0055, #00f0ff, #00ff66, #ffd700, #b026ff);
-            background-size: 300% 300%;
+            font-size: 13px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; margin-top: 4px;
+            background: linear-gradient(270deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00f0ff, #b026ff, #ff0055);
+            background-size: 400% 400%;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: rainbowFlow 3s ease infinite;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+            animation: rainbowFlow 4s ease infinite;
+            filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.5));
         }
 
         @keyframes rainbowFlow {
@@ -66,264 +69,180 @@
             100% { background-position: 0% 50%; }
         }
 
-        .hud-controls { display: flex; align-items: center; gap: 15px; }
+        .hud-controls { display: flex; align-items: center; gap: 14px; }
 
         .hud-box {
-            background: var(--panel-bg); border: 1px solid var(--panel-border);
+            background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05);
             padding: 8px 18px; border-radius: 12px; font-size: 15px; font-weight: 800;
-            display: flex; align-items: center; gap: 8px; height: 42px;
-            transition: 0.3s;
+            display: flex; align-items: center; gap: 10px; height: 44px;
+            transition: all 0.3s ease;
         }
         
-        /* Мощные неоновые свечения HUD панелей */
-        .box-balance { color: var(--neon-gold); border-color: rgba(255,215,0,0.4); box-shadow: 0 0 15px rgba(255,215,0,0.15); text-shadow: 0 0 8px rgba(255,215,0,0.3); }
-        .box-crystals { color: var(--neon-blue); border-color: rgba(0,240,255,0.4); box-shadow: 0 0 15px rgba(0,240,255,0.15); text-shadow: 0 0 8px rgba(0,240,255,0.3); }
-        .box-energy { color: #ffaa00; border-color: rgba(255,170,0,0.4); box-shadow: 0 0 15px rgba(255,170,0,0.15); position: relative; }
+        .box-balance { color: var(--neon-gold); border-color: rgba(255,215,0,0.3); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
+        .box-crystals { color: var(--neon-blue); border-color: rgba(0,240,255,0.3); box-shadow: 0 0 15px rgba(0, 240, 255, 0.15); }
+        .box-energy { color: #ffaa00; border-color: rgba(255,170,0,0.3); box-shadow: 0 0 15px rgba(255, 170, 0, 0.15); position: relative; }
 
-        .energy-bar-mini {
-            position: absolute; bottom: 0; left: 12px; width: calc(100% - 24px); height: 3px;
-            background: rgba(0,0,0,0.6); border-radius: 2px; overflow: hidden;
-        }
+        .energy-bar-mini { position: absolute; bottom: 0; left: 12px; width: calc(100% - 24px); height: 4px; background: rgba(0,0,0,0.6); border-radius: 2px; overflow: hidden; }
         .energy-fill-mini { height: 100%; width: 100%; background: #ffaa00; box-shadow: 0 0 8px #ffaa00; transition: width 0.3s ease; }
 
         .btn-action {
-            background: rgba(176, 38, 255, 0.05); border: 1px solid rgba(176, 38, 255, 0.4); color: var(--neon-purple);
-            padding: 0 18px; border-radius: 12px; font-weight: 800; cursor: pointer; height: 42px;
+            background: rgba(176, 38, 255, 0.1); border: 1px solid var(--neon-purple); color: var(--neon-purple);
+            padding: 0 18px; border-radius: 12px; font-weight: 800; cursor: pointer; height: 44px;
             display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; font-size: 12px;
-            transition: all 0.25s ease;
-            box-shadow: 0 0 10px rgba(176, 38, 255, 0.1);
-            text-shadow: 0 0 5px rgba(176, 38, 255, 0.3);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(176, 38, 255, 0.1);
         }
-        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 20px rgba(176, 38, 255, 0.6); text-shadow: none; }
+        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 25px rgba(176, 38, 255, 0.65); transform: translateY(-1px); }
         
-        .btn-plus-donate {
-            background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.4); color: var(--neon-blue);
-            width: 42px; padding: 0; font-size: 18px; box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
-        }
-        .btn-plus-donate:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px rgba(0,240,255,0.6); }
+        .btn-logout { border-color: var(--neon-red); color: var(--neon-red); background: rgba(255, 0, 85, 0.05); }
+        .btn-logout:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 25px rgba(255, 0, 85, 0.65); }
+
+        .btn-plus-donate { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue); width: 44px; padding: 0; font-size: 18px; }
+        .btn-plus-donate:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px rgba(0, 240, 255, 0.65); }
 
         .game-viewport { width: 100%; max-width: 1300px; display: grid; grid-template-columns: 390px 1fr; gap: 25px; }
 
-        .seeds-shop {
-            background: var(--panel-bg); backdrop-filter: blur(16px);
-            border: 1px solid var(--panel-border); border-radius: 20px; padding: 18px;
-            height: calc(100vh - 130px); overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.01);
-            animation: slideInShop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
+        .seeds-shop { background: var(--panel-bg); backdrop-filter: blur(15px); border: 1px solid var(--panel-border); border-radius: 18px; padding: 18px; height: calc(100vh - 130px); overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .seeds-shop h2 { margin: 0 0 18px 5px; font-size: 14px; text-transform: uppercase; color: #475569; letter-spacing: 1.5px; }
 
-        @keyframes slideInShop {
-            from { opacity: 0; transform: translateX(-50px); filter: blur(6px); }
-            to { opacity: 1; transform: translateX(0); filter: blur(0); }
-        }
-
-        .seeds-shop h2 { 
-            margin: 0 0 18px 5px; font-size: 13px; text-transform: uppercase; color: #475569; letter-spacing: 2px; 
-            text-shadow: 0 0 5px rgba(255,255,255,0.05);
-        }
-
-        .seed-item {
-            background: rgba(255, 255, 255, 0.01); border: 1px solid #111927;
-            border-radius: 14px; padding: 12px; margin-bottom: 10px; cursor: pointer;
-            display: flex; flex-direction: column; gap: 4px; transition: all 0.2s; position: relative;
-        }
-        .seed-item:hover { border-color: #223147; background: rgba(255, 255, 255, 0.03); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .seed-item.selected { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.01); box-shadow: 0 0 15px rgba(0, 255, 102, 0.15); }
+        .seed-item { background: rgba(255, 255, 255, 0.01); border: 1px solid #1e293b; border-radius: 14px; padding: 12px; margin-bottom: 10px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: all 0.2s ease; }
+        .seed-item:hover { border-color: #475569; background: rgba(255, 255, 255, 0.03); }
+        .seed-item.selected { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.03); box-shadow: 0 0 15px rgba(0, 255, 102, 0.15); }
         .seed-item.locked { opacity: 0.5; }
-        .seed-item.locked:hover { opacity: 0.9; border-color: var(--neon-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
+        .seed-item.locked:hover { opacity: 0.9; border-color: var(--neon-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
 
         .seed-main-row { display: flex; gap: 12px; align-items: center; }
-        .seed-icon-badge {
-            width: 44px; height: 44px; border-radius: 10px;
-            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: center; font-size: 18px;
-            transition: 0.2s;
-        }
+        .seed-icon-badge { width: 44px; height: 44px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .seed-item.selected .seed-icon-badge { border-color: var(--neon-green); box-shadow: 0 0 12px var(--badge-glow); }
 
         .seed-details { flex-grow: 1; display: flex; flex-direction: column; }
-        .seed-row1 { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: #fff; }
-        .seed-row2 { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-top: 3px; }
+        .seed-row1 { display: flex; justify-content: space-between; font-weight: 700; font-size: 14px; color: #fff; }
+        .seed-row2 { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-top: 3px; }
+        .unlock-overlay { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #273549; font-size: 12px; font-weight: 800; color: var(--neon-gold); text-align: center; text-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
 
-        .unlock-overlay {
-            margin-top: 8px; padding-top: 8px; border-top: 1px dashed #1e293b;
-            font-size: 11px; font-weight: 800; color: var(--neon-gold); text-align: center;
-            text-shadow: 0 0 6px rgba(255,215,0,0.3);
-        }
+        .farm-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 245px; gap: 18px; }
 
-        .farm-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 235px; gap: 15px; }
-
-        /* ЗЕМЛЯНОЙ ДИЗАЙН С ПОДДЕРЖКОЙ ВЛАЖНОСТИ */
         .plot-node {
-            background-color: #1a0d06;
-            background-image: 
-                repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 2px, transparent 2px, transparent 10px),
-                linear-gradient(135deg, #2b160b 0%, #120703 100%);
-            border: 2px solid #3d2010; border-radius: 18px; padding: 12px;
-            display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-            cursor: pointer; position: relative; transition: all 0.25s ease;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 6px 15px rgba(0,0,0,0.4);
-            animation: fadeInPlots 0.5s ease both;
+            background-color: #1f1108;
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 2px, transparent 2px, transparent 8px), linear-gradient(135deg, #331c0e 0%, #140a04 100%);
+            border: 2px solid #422513; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: pointer; position: relative; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 0 0 20px rgba(0,0,0,0.7), 0 8px 16px rgba(0,0,0,0.4);
         }
+        .plot-node:hover:not(.state-locked) { border-color: #6e3d20; transform: translateY(-4px); box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 12px 24px rgba(0,0,0,0.5); }
 
-        /* ЭФФЕКТ ВЛАЖНОЙ ЗЕМЛИ ПРИ ПОЛИВЕ (НЕОНОВО-СИНЯЯ ТЕКСТУРА) */
-        .plot-node.is-watered {
-            border-color: rgba(0, 240, 255, 0.7) !important;
-            box-shadow: inset 0 0 25px rgba(0, 240, 255, 0.2), 0 0 25px rgba(0, 240, 255, 0.25);
-            background-color: #08111f;
-            background-image: 
-                repeating-linear-gradient(45deg, rgba(0,240,255,0.02) 0px, rgba(0,240,255,0.02) 2px, transparent 2px, transparent 10px),
-                linear-gradient(135deg, #0e1c2e 0%, #040810 100%);
-        }
-
-        @keyframes fadeInPlots {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .plot-node:hover:not(.state-locked) { 
-            border-color: #5c321a; 
-            transform: translateY(-4px);
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 12px 24px rgba(0,0,0,0.5);
-        }
-        .plot-node.is-watered:hover:not(.state-locked) {
-            border-color: var(--neon-blue) !important;
-        }
-
-        .soil-container {
-            width: 84px; height: 84px; 
-            background: radial-gradient(circle, var(--soil-light) 0%, var(--soil-dark) 100%);
-            border-radius: 50%; border: 3px solid #24130a; 
-            box-shadow: inset 0 6px 14px rgba(0,0,0,0.9), 0 2px 4px rgba(255,255,255,0.02);
-            display: flex; align-items: flex-end; justify-content: center; position: relative; overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        /* Лунка во влажном состоянии */
-        .is-watered .soil-container {
-            background: radial-gradient(circle, #10263d 0%, #050d17 100%);
-            border-color: #0b223a;
-            box-shadow: inset 0 6px 14px rgba(0,0,0,0.9), 0 0 15px rgba(0, 240, 255, 0.5);
-        }
+        .soil-container { width: 86px; height: 86px; background: radial-gradient(circle, var(--soil-light) 0%, var(--soil-dark) 100%); border-radius: 50%; border: 3px solid #24140b; box-shadow: inset 0 6px 12px rgba(0,0,0,0.9); display: flex; align-items: flex-end; justify-content: center; position: relative; overflow: hidden; }
+        .soil-container.is-wet { background: radial-gradient(circle, var(--soil-wet-light) 0%, var(--soil-wet-dark) 100%); border-color: rgba(0, 240, 255, 0.4); box-shadow: inset 0 6px 14px rgba(0,0,0,0.9), 0 0 15px rgba(0, 240, 255, 0.45); }
         
-        .plant-visual {
-            color: #334155; transition: all 0.4s ease;
-            position: absolute; bottom: 8px; display: flex; align-items: flex-end; justify-content: center;
-        }
-
-        .stage-1 .plant-visual { font-size: 12px; color: #a16207; transform: translateY(4px); }
-        .stage-2 .plant-visual { font-size: 20px; color: #65a30d; }
-        .stage-3 .plant-visual { font-size: 30px; color: #4d7c0f; }
-        .stage-4 .plant-visual { font-size: 40px; color: var(--crop-color); filter: brightness(0.95); }
-        .stage-5 .plant-visual { 
-            font-size: 46px; color: var(--crop-color); 
-            filter: drop-shadow(0 0 12px var(--crop-color));
-            animation: floatPlant 2s ease-in-out infinite;
-        }
+        .plant-visual { color: #475569; transition: all 0.4s ease; position: absolute; bottom: 8px; display: flex; align-items: flex-end; justify-content: center; }
+        .stage-1 .plant-visual { font-size: 13px; color: #a16207; transform: translateY(3px); }
+        .stage-2 .plant-visual { font-size: 22px; color: #65a30d; filter: drop-shadow(0 0 4px rgba(101,163,13,0.3)); }
+        .stage-3 .plant-visual { font-size: 32px; color: #4d7c0f; filter: drop-shadow(0 0 6px rgba(77,124,15,0.5)); }
+        .stage-4 .plant-visual { font-size: 42px; color: var(--crop-color); filter: brightness(0.95) drop-shadow(0 0 10px var(--crop-color)); }
+        .stage-5 .plant-visual { font-size: 48px; color: var(--crop-color); filter: drop-shadow(0 0 18px var(--crop-color)); animation: floatPlant 2s ease-in-out infinite; }
 
         @keyframes floatPlant { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
-        .plot-node.state-withered { border-color: var(--neon-red); box-shadow: 0 0 20px rgba(255, 0, 85, 0.3), inset 0 0 15px rgba(0,0,0,0.7); }
-        .state-withered .soil-container { filter: grayscale(0.7) brightness(0.4); border-color: #3b0712; box-shadow: none; }
-        .state-withered .plant-visual { color: var(--neon-red) !important; font-size: 36px; filter: drop-shadow(0 0 10px red); animation: none; }
-
-        .plot-node.state-ready { border-color: var(--neon-green); box-shadow: 0 0 25px rgba(0, 255, 102, 0.25), inset 0 0 15px rgba(0,0,0,0.5); }
+        .plot-node.state-withered { border-color: var(--neon-red); box-shadow: 0 0 25px rgba(255, 0, 85, 0.3); }
+        .state-withered .soil-container { filter: grayscale(0.5) brightness(0.4); }
+        .state-withered .plant-visual { color: var(--neon-red) !important; font-size: 38px; filter: drop-shadow(0 0 12px red); }
+        .plot-node.state-ready { border-color: var(--neon-green); box-shadow: 0 0 25px rgba(0, 255, 102, 0.35); }
         
-        .plot-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #735c4f; letter-spacing: 0.5px; transition: 0.2s; }
-        .plot-node.state-ready .plot-title { color: var(--neon-green); text-shadow: 0 0 8px rgba(0,255,102,0.4); }
-        .plot-node.is-watered .plot-title { color: var(--neon-blue); text-shadow: 0 0 8px rgba(0,240,255,0.4); }
+        .plot-node.state-locked { background: linear-gradient(135deg, #100905 0%, #060301 100%); border: 2px dashed #29170c; justify-content: center; gap: 10px; box-shadow: none; }
+        .plot-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #7d6557; letter-spacing: 0.5px; }
+        .plot-node.state-ready .plot-title { color: var(--neon-green); text-shadow: 0 0 8px rgba(0,255,102,0.5); }
         
         .plot-hud { width: 100%; display: flex; flex-direction: column; gap: 5px; }
-        .hud-text { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: #8c7467; }
-        .is-watered .hud-text { color: #527394; }
-        
-        .progress-bar-bg { width: 100%; height: 6px; background: #05080f; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
+        .hud-text { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: #947e72; }
+        .progress-bar-bg { width: 100%; height: 6px; background: #05070b; border-radius: 3px; overflow: hidden; }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-green)); box-shadow: 0 0 8px var(--neon-blue); }
 
-        /* ПАНЕЛЬ УПРАВЛЕНИЯ КНОПКАМИ ГРЯДКИ */
-        .plot-action-row { display: flex; gap: 6px; width: 100%; }
+        .plot-actions-row { display: flex; gap: 4px; margin-top: 3px; }
+        .btn-skip-donate { flex: 1; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.25); color: var(--neon-blue); font-size: 10px; font-weight: 800; padding: 5px 0; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; text-transform: uppercase; }
+        .btn-skip-donate:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 12px var(--neon-blue); }
 
-        .btn-skip-donate {
-            flex: 1; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.25);
-            color: var(--neon-blue); font-size: 10px; font-weight: 800; padding: 5px 0; border-radius: 7px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase;
-            transition: all 0.15s;
-        }
-        .btn-skip-donate:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 15px var(--neon-blue); }
+        .btn-water-plot { flex: 1; background: rgba(0, 255, 102, 0.05); border: 1px solid rgba(0, 255, 102, 0.25); color: var(--neon-green); font-size: 10px; font-weight: 800; padding: 5px 0; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; text-transform: uppercase; }
+        .btn-water-plot:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 12px var(--neon-green); }
+        .btn-water-plot.active-water { background: rgba(0, 240, 255, 0.15); border-color: var(--neon-blue); color: var(--neon-blue); cursor: default; pointer-events: none; }
 
-        /* КНОПКА ПОЛИВА */
-        .btn-water {
-            flex: 1; background: rgba(0, 240, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #5294e2; font-size: 10px; font-weight: 800; padding: 5px 0; border-radius: 7px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase;
-            transition: all 0.2s;
-        }
-        .btn-water:hover { background: rgba(0, 240, 255, 0.15); color: var(--neon-blue); border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
-        .btn-water.water-active {
-            background: rgba(0, 240, 255, 0.25); border-color: var(--neon-blue); color: #fff;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4); cursor: default;
-        }
-
-        .lock-hud { text-align: center; color: #403027; transition: 0.2s; }
+        .lock-hud { text-align: center; color: #4a3a31; }
         .lock-hud i { font-size: 22px; margin-bottom: 5px; }
-        .buy-cost { color: var(--neon-gold); font-weight: 800; font-size: 12px; text-shadow: 0 0 5px rgba(255,215,0,0.2); }
-        .plot-node.state-locked:hover .lock-hud { color: var(--neon-gold); filter: drop-shadow(0 0 8px rgba(255,215,0,0.5)); }
+        .buy-cost { color: var(--neon-gold); font-weight: 800; font-size: 12px; }
 
-        /* МОДАЛЬНЫЕ ОКНА */
-        .modal-overlay {
+        /* ЭКРАН СИСТЕМЫ АККАУНТОВ (НЕОНОВЫЙ ЛОГИН) */
+        .auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(1, 2, 4, 0.9); backdrop-filter: blur(12px);
-            display: flex; align-items: center; justify-content: center; z-index: 1000;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
+            background: #020408; z-index: 9999; display: flex; align-items: center; justify-content: center;
         }
+        .auth-card {
+            background: var(--panel-bg); border: 2px solid var(--panel-border);
+            border-radius: 24px; padding: 40px; width: 400px; text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 15px rgba(255,255,255,0.01);
+            transition: border-color 0.3s;
+        }
+        .auth-card:focus-within { border-color: var(--neon-blue); box-shadow: 0 0 30px rgba(0, 240, 255, 0.25); }
+        .auth-card h2 { margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 2px; color: #fff; }
+        .auth-card p { margin: 0 0 25px 0; font-size: 12px; color: #475569; font-weight: 600; }
+        .auth-input-group { margin-bottom: 15px; text-align: left; }
+        .auth-input-group label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .auth-input-group input {
+            width: 100%; background: #070c14; border: 1px solid #1e293b; border-radius: 10px;
+            padding: 12px 14px; color: #fff; font-size: 14px; outline: none; transition: all 0.2s;
+        }
+        .auth-input-group input:focus { border-color: var(--neon-purple); box-shadow: 0 0 12px rgba(176,38,255,0.25); }
         
+        .auth-btn-primary { width: 100%; background: var(--neon-blue); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 800; font-size: 14px; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; margin-top: 10px; transition: all 0.2s; }
+        .auth-btn-primary:hover { box-shadow: 0 0 20px var(--neon-blue); transform: translateY(-1px); }
+        .auth-toggle-link { margin-top: 20px; font-size: 12px; color: #64748b; font-weight: 600; cursor: pointer; }
+        .auth-toggle-link span { color: var(--neon-purple); }
+        .auth-toggle-link span:hover { text-shadow: 0 0 5px var(--neon-purple); }
+
+        /* Модалки */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(1, 2, 4, 0.9); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-
-        .modal-card {
-            background: var(--panel-bg); border: 1px solid var(--panel-border);
-            width: 600px; padding: 30px; border-radius: 24px; text-align: center; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(0, 240, 255, 0.03);
-            transform: scale(0.8) translateY(50px);
-            transition: transform 0.4s cubic-bezier(0.34, 1.6, 0.64, 1);
-        }
-
+        .modal-card { background: var(--panel-bg); border: 1px solid var(--panel-border); width: 600px; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,0.8); transform: scale(0.8) translateY(50px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #donation-modal .modal-card { border-color: rgba(0, 240, 255, 0.4); }
+        #upgrades-modal .modal-card { border-color: rgba(176, 38, 255, 0.4); }
         .modal-overlay.active .modal-card { transform: scale(1) translateY(0); }
-
-        .modal-card h3 { margin: 0 0 10px 0; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; }
-        .modal-card p { color: #475569; font-size: 13px; margin-bottom: 22px; margin-top: 0; font-weight: 600; }
-
-        .donation-split { display: flex; gap: 20px; margin-bottom: 10px; }
+        .modal-card h3 { margin: 0 0 10px 0; font-size: 22px; color: #fff; text-transform: uppercase; }
+        .modal-card p { color: #475569; font-size: 13px; margin-bottom: 22px; margin-top: 0; }
+        .donation-split { display: flex; gap: 18px; margin-bottom: 12px; }
         .donation-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .donation-col h4 { 
-            color: #fff; text-align: center; margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
-            border-bottom: 1px solid var(--panel-border); padding-bottom: 10px;
-        }
-
-        .shop-item {
-            background: rgba(255,255,255,0.01); border: 1px solid #111a2e;
-            padding: 12px 14px; border-radius: 14px;
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s;
-        }
-        .shop-item:hover { border-color: var(--neon-purple); background: rgba(176,38,255,0.04); box-shadow: 0 0 15px rgba(176,38,255,0.15); }
+        .donation-col h4 { color: #fff; text-align: center; margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; }
+        .shop-item { background: rgba(255,255,255,0.01); border: 1px solid #1e293b; padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .shop-item:hover { border-color: var(--neon-purple); background: rgba(176,38,255,0.04); }
         .shop-item-info { text-align: left; }
         .shop-item-name { font-weight: 800; font-size: 14px; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .shop-item-desc { font-size: 11px; color: #475569; margin-top: 3px; font-weight: 600; }
+        .shop-item-desc { font-size: 11px; color: #475569; margin-top: 3px; }
         .shop-item-price { font-weight: 900; font-size: 12px; border-radius: 8px; padding: 5px 10px; text-transform: uppercase; }
-        
-        .price-real { background: #0284c7; color: #fff; box-shadow: 0 0 10px rgba(2,132,199,0.3); }
-        .price-crypto { background: #0f172a; color: var(--neon-blue); border: 1px solid rgba(0,240,255,0.3); box-shadow: 0 0 10px rgba(0,240,255,0.1); }
-
-        .btn-close-modal { margin-top: 20px; background: transparent; border: none; color: #334155; cursor: pointer; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
-        .btn-close-modal:hover { color: #fff; text-shadow: 0 0 8px #fff; }
+        .price-real { background: #0284c7; color: #fff; }
+        .price-crypto { background: #131b2e; color: var(--neon-blue); border: 1px solid rgba(0,240,255,0.25); }
+        .btn-close-modal { margin-top: 20px; background: transparent; border: none; color: #475569; cursor: pointer; font-weight: 800; font-size: 13px; text-transform: uppercase; }
+        .btn-close-modal:hover { color: #fff; }
     </style>
 </head>
 <body>
 
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-card">
+            <h2 id="auth-title" style="text-shadow: 0 0 15px var(--neon-blue);">Вход в систему</h2>
+            <p id="auth-subtitle">Получение доступа к квантовым грядкам</p>
+            
+            <div class="auth-input-group">
+                <label>Почта (Email)</label>
+                <input type="email" id="auth-email" placeholder="cyberfarmer@galaxy.com">
+            </div>
+            <div class="auth-input-group">
+                <label>Пароль</label>
+                <input type="password" id="auth-password" placeholder="••••••••">
+            </div>
+
+            <button id="auth-submit-btn" class="auth-btn-primary" onclick="handleAuthSubmit()">Войти в сеть</button>
+            <div id="auth-toggle" class="auth-toggle-link" onclick="toggleAuthMode()">Нет аккаунта? <span>Создать профиль</span></div>
+        </div>
+    </div>
+
     <header>
         <div class="brand">
             <h1>Money Farm</h1>
-            <div class="rainbow-text">Cybernetic Harvest</div>
+            <div class="rainbow-text">Cyber-Cloud Edition</div>
         </div>
         <div class="hud-controls">
             <div class="hud-box box-energy">
@@ -342,6 +261,9 @@
             <button class="btn-action btn-plus-donate" onclick="toggleModal('donation-modal', true)">
                 <i class="fa-solid fa-plus"></i>
             </button>
+            <button class="btn-action btn-logout" onclick="handleLogout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Выйти
+            </button>
         </div>
     </header>
 
@@ -350,16 +272,13 @@
         <div class="farm-grid" id="grid-container"></div>
     </div>
 
-    <!-- Модалка Платного Банка -->
     <div class="modal-overlay" id="donation-modal">
         <div class="modal-card">
-            <h3 style="color: var(--neon-blue); text-shadow: 0 0 15px rgba(0,240,255,0.4);">Донат Маркет</h3>
+            <h3 style="color: var(--neon-blue); text-shadow: 0 0 12px rgba(0,240,255,0.4);">Донат Маркет</h3>
             <p>Платные инъекции ресурсов за реальную валюту</p>
-            
             <div class="donation-split">
-                <!-- Колонка Денег -->
                 <div class="donation-col">
-                    <h4 style="color: var(--neon-gold); text-shadow: 0 0 8px rgba(255,215,0,0.3);"><i class="fa-solid fa-wallet"></i> Покупка Денег</h4>
+                    <h4 style="color: var(--neon-gold); text-shadow: 0 0 8px rgba(255,215,0,0.3);"><i class="fa-solid fa-wallet"></i> Деньги</h4>
                     <div class="shop-item" onclick="buyPremiumPack('cash_small')">
                         <div class="shop-item-info">
                             <div class="shop-item-name"><i class="fa-solid fa-sack-dollar" style="color:#ffd700"></i> Кейс</div>
@@ -375,10 +294,8 @@
                         <div class="shop-item-price price-real">$9.99</div>
                     </div>
                 </div>
-
-                <!-- Колонка Кристаллов -->
                 <div class="donation-col">
-                    <h4 style="color: var(--neon-blue); text-shadow: 0 0 8px rgba(0,240,255,0.3);"><i class="fa-solid fa-gem"></i> Покупка Кристаллов</h4>
+                    <h4 style="color: var(--neon-blue); text-shadow: 0 0 8px rgba(0,240,255,0.3);"><i class="fa-solid fa-gem"></i> Кристаллы</h4>
                     <div class="shop-item" onclick="buyPremiumPack('gems_small')">
                         <div class="shop-item-info">
                             <div class="shop-item-name"><i class="fa-solid fa-gem" style="color:#00f0ff"></i> Горсть</div>
@@ -395,25 +312,21 @@
                     </div>
                 </div>
             </div>
-
             <button class="btn-close-modal" onclick="toggleModal('donation-modal', false)">Закрыть</button>
         </div>
     </div>
 
-    <!-- Модалка Глобальных Бустеров -->
     <div class="modal-overlay" id="upgrades-modal">
         <div class="modal-card" style="width: 460px;">
-            <h3 style="color: var(--neon-purple); text-shadow: 0 0 15px rgba(176,38,255,0.4);">Временные Ускорители</h3>
+            <h3 style="color: var(--neon-purple); text-shadow: 0 0 12px rgba(176,38,255,0.4);">Глобальные Бусты</h3>
             <p>Активация квантовых протоколов на всю ферму</p>
-
             <div class="shop-item" onclick="buyBattery()" style="margin-bottom: 10px;">
                 <div class="shop-item-info">
                     <div class="shop-item-name"><i class="fa-solid fa-bolt" style="color:#ffaa00"></i> Квантовая Батарея</div>
-                    <div class="shop-item-desc">Мгновенно восстанавливает всю энергию до максимума.</div>
+                    <div class="shop-item-desc">Восстанавливает всю энергию до максимума.</div>
                 </div>
                 <div class="shop-item-price price-crypto">5 💎</div>
             </div>
-            
             <div class="shop-item" onclick="buyTimeBoost()">
                 <div class="shop-item-info">
                     <div class="shop-item-name"><i class="fa-solid fa-bolt-lightning" style="color:var(--neon-purple)"></i> Сингулярность 2x</div>
@@ -421,12 +334,20 @@
                 </div>
                 <div class="shop-item-price price-crypto">15 💎</div>
             </div>
-
             <button class="btn-close-modal" onclick="toggleModal('upgrades-modal', false)">Закрыть</button>
         </div>
     </div>
 
     <script>
+        // --- КОНФИГУРАЦИЯ SUPABASE ---
+        const SUPABASE_URL = https://diwjvaukhyjcyvyrbmhg.supabase.co/rest/v1/;
+        const SUPABASE_KEY = sb_publishable_4m367C496__Kx0wwcBmMUQ_vG05ySuz;
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let isSignUpMode = false;
+        let currentUser = null;
+
         const Sfx = {
             ctx: null,
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
@@ -435,11 +356,11 @@
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 let now = this.ctx.currentTime;
-                if (type === 'click') { osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04); osc.start(now); osc.stop(now + 0.04); }
-                else if (type === 'plant') { osc.type = 'triangle'; osc.frequency.setValueAtTime(260, now); osc.frequency.exponentialRampToValueAtTime(520, now + 0.07); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07); osc.start(now); osc.stop(now + 0.07); }
-                else if (type === 'cash') { osc.type = 'sine'; osc.frequency.setValueAtTime(950, now); osc.frequency.setValueAtTime(1400, now + 0.04); gain.gain.setValueAtTime(0.06, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12); osc.start(now); osc.stop(now + 0.12); }
-                else if (type === 'error') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(130, now); gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); osc.start(now); osc.stop(now + 0.15); }
-                else if (type === 'unlock') { osc.type = 'square'; osc.frequency.setValueAtTime(350, now); osc.frequency.setValueAtTime(550, now + 0.08); osc.frequency.setValueAtTime(950, now + 0.16); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35); osc.start(now); osc.stop(now + 0.35); }
+                if (type === 'click') { osc.type = 'sine'; osc.frequency.setValueAtTime(550, now); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04); osc.start(now); osc.stop(now + 0.04); }
+                else if (type === 'plant') { osc.type = 'triangle'; osc.frequency.setValueAtTime(280, now); osc.frequency.exponentialRampToValueAtTime(560, now + 0.08); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08); osc.start(now); osc.stop(now + 0.08); }
+                else if (type === 'cash') { osc.type = 'sine'; osc.frequency.setValueAtTime(1000, now); osc.frequency.setValueAtTime(1450, now + 0.04); gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12); osc.start(now); osc.stop(now + 0.12); }
+                else if (type === 'error') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(120, now); gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); osc.start(now); osc.stop(now + 0.15); }
+                else if (type === 'unlock') { osc.type = 'square'; osc.frequency.setValueAtTime(380, now); osc.frequency.setValueAtTime(580, now + 0.08); osc.frequency.setValueAtTime(980, now + 0.16); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35); osc.start(now); osc.stop(now + 0.35); }
             }
         };
 
@@ -454,88 +375,125 @@
             gold_tree: { id: 'gold_tree', name: 'Золотое дерево', unlockCost: 1500000, cost: 800000, revenue: 4800000, time: 86400, color: '#ffd700', icon: 'fa-tree' }
         };
 
-        const PLOT_PRICES = { 
-            3: 500, 4: 2000, 5: 10000, 6: 50000, 
-            7: 200000, 8: 500000, 9: 1500000, 
-            10: 5000000, 11: 10000000, 12: 25000000 
-        };
-
+        const PLOT_PRICES = { 3: 500, 4: 2000, 5: 10000, 6: 50000, 7: 200000, 8: 500000, 9: 1500000, 10: 5000000, 11: 10000000, 12: 25000000 };
         const WITHER_TIME_MS = 86400000;
+        const WATER_DURATION_MS = 45000;
         const CLEAR_COST = 100;
         const ENERGY_REGEN_MS = 30000;
         const MAX_ENERGY = 20;
-        const WATER_DURATION_MS = 30000; // Полив длится 30 секунд
 
-        let state = {
-            balance: 100,
-            crystals: 10,
-            energy: 20,
-            energyTimer: 0,
-            selectedCrop: 'wheat',
-            unlockedCrops: ['wheat', 'corn'],
-            boostTimeLeft: 0,
-            lastSavedTime: Date.now(),
-            plots: {}
-        };
-
+        let state = { balance: 100, crystals: 10, energy: 20, energyTimer: 0, selectedCrop: 'wheat', unlockedCrops: ['wheat', 'corn'], boostTimeLeft: 0, lastSavedTime: Date.now(), plots: {} };
         let lastFrameTime = Date.now();
 
+        // --- ЛОГИКА АВТОРИЗАЦИИ (SUPABASE) ---
+        function toggleAuthMode() {
+            Sfx.play('click');
+            isSignUpMode = !isSignUpMode;
+            const card = document.querySelector('.auth-card');
+            if (isSignUpMode) {
+                document.getElementById('auth-title').textContent = "Регистрация";
+                document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-purple)";
+                card.style.borderColor = "var(--neon-purple)";
+                document.getElementById('auth-subtitle').textContent = "Создание новой ячейки в базе данных";
+                document.getElementById('auth-submit-btn').textContent = "Зарегистрироваться";
+                document.getElementById('auth-toggle').innerHTML = "Уже есть аккаунт? <span>Войти в сеть</span>";
+            } else {
+                document.getElementById('auth-title').textContent = "Вход в систему";
+                document.getElementById('auth-title').style.textShadow = "0 0 15px var(--neon-blue)";
+                card.style.borderColor = "var(--neon-border)";
+                document.getElementById('auth-subtitle').textContent = "Получение доступа к квантовым грядкам";
+                document.getElementById('auth-submit-btn').textContent = "Войти в сеть";
+                document.getElementById('auth-toggle').innerHTML = "Нет аккаунта? <span>Создать профиль</span>";
+            }
+        }
+
+        async function handleAuthSubmit() {
+            Sfx.play('click');
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+
+            if (!email || !password) { Sfx.play('error'); alert("Заполните поля!"); return; }
+
+            if (isSignUpMode) {
+                // РЕГИСТРАЦИЯ
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) { Sfx.play('error'); alert("Ошибка регистрации: " + error.message); return; }
+                alert("Аккаунт создан! Теперь войдите.");
+                toggleAuthMode();
+            } else {
+                // ВХОД
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) { Sfx.play('error'); alert("Ошибка входа: " + error.message); return; }
+                currentUser = data.user;
+                document.getElementById('auth-screen').style.display = 'none';
+                await loadCloudData();
+            }
+        }
+
+        async function handleLogout() {
+            Sfx.play('click');
+            await supabase.auth.signOut();
+            location.reload();
+        }
+
+        // --- КВАНТОВОЕ СОХРАНЕНИЕ В ОБЛАКО ---
+        async function saveCloudData() {
+            if (!currentUser) return;
+            state.lastSavedTime = Date.now();
+            await supabase.from('profiles').update({
+                balance: state.balance,
+                crystals: state.crystals,
+                energy: state.energy,
+                unlocked_crops: state.unlockedCrops,
+                plots: state.plots
+            }).eq('id', currentUser.id);
+        }
+
+        async function loadCloudData() {
+            if (!currentUser) return;
+            const { data, error } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+            
+            if (data) {
+                state.balance = data.balance;
+                state.crystals = data.crystals;
+                state.energy = data.energy;
+                state.unlockedCrops = data.unlocked_crops;
+                
+                if (data.plots && Object.keys(data.plots).length > 0) {
+                    state.plots = data.plots;
+                } else {
+                    initDefaultPlots();
+                }
+
+                // Расчет оффлайн прогресса
+                const offlineDuration = Date.now() - data.updated_at; // Используем дату изменения в БД
+                if (offlineDuration > 0) {
+                    state.energy = Math.min(MAX_ENERGY, state.energy + Math.floor(offlineDuration / ENERGY_REGEN_MS));
+                    for (let key in state.plots) {
+                        let plot = state.plots[key];
+                        if (!plot.isLocked && plot.status === 'growing') {
+                            plot.progressMs += offlineDuration;
+                            if (plot.progressMs >= CROPS[plot.cropId].time * 1000) {
+                                plot.status = 'ready';
+                                plot.readyTime = Date.now();
+                            }
+                        }
+                    }
+                }
+            } else {
+                initDefaultPlots();
+            }
+            
+            updateHUD(); buildShopUI(); buildGridUI();
+            lastFrameTime = Date.now(); setInterval(gameProcessingLoop, 100);
+        }
+
         function initDefaultPlots() {
+            state.plots = {};
             for (let i = 1; i <= 12; i++) {
                 state.plots[i] = { id: i, isLocked: i > 2, status: 'empty', cropId: null, progressMs: 0, readyTime: null, waterTimeLeftMs: 0 };
             }
         }
-
-        function loadGame() {
-            const save = localStorage.getItem('money_farm_neon_water_v1');
-            if (save) {
-                try {
-                    state = JSON.parse(save);
-                    if (state.crystals === undefined) state.crystals = 10;
-                    if (state.energy === undefined) state.energy = 20;
-                    if (state.energyTimer === undefined) state.energyTimer = 0;
-
-                    const offlineDuration = Date.now() - state.lastSavedTime;
-                    if (offlineDuration > 0) {
-                        let totalEnergyRegen = Math.floor((offlineDuration + state.energyTimer) / ENERGY_REGEN_MS);
-                        state.energy = Math.min(MAX_ENERGY, state.energy + totalEnergyRegen);
-                        state.energyTimer = (offlineDuration + state.energyTimer) % ENERGY_REGEN_MS;
-
-                        // Испарение воды в офлайне происходит мгновенно (30с слишком мало), буст не симулируем долго
-                        let remainingOffline = offlineDuration;
-                        let totalSimulatedProgress = 0;
-                        if (state.boostTimeLeft > 0) {
-                            let boostedOfflineTime = Math.min(remainingOffline, state.boostTimeLeft);
-                            totalSimulatedProgress += boostedOfflineTime * 2;
-                            state.boostTimeLeft -= boostedOfflineTime;
-                            remainingOffline -= boostedOfflineTime;
-                        }
-                        totalSimulatedProgress += remainingOffline;
-
-                        for (let key in state.plots) {
-                            let plot = state.plots[key];
-                            if (plot.waterTimeLeftMs === undefined) plot.waterTimeLeftMs = 0;
-                            plot.waterTimeLeftMs = 0; // Вода высохла
-
-                            if (!plot.isLocked && plot.status === 'growing') {
-                                plot.progressMs += totalSimulatedProgress;
-                                const totalNeeded = CROPS[plot.cropId].time * 1000;
-                                if (plot.progressMs >= totalNeeded) {
-                                    plot.status = 'ready';
-                                    let msOver = plot.progressMs - totalNeeded;
-                                    if (msOver >= WITHER_TIME_MS) plot.status = 'withered';
-                                    else plot.readyTime = Date.now() - msOver;
-                                }
-                            }
-                        }
-                    }
-                    return;
-                } catch (e) { console.error(e); }
-            }
-            initDefaultPlots();
-        }
-
-        function saveGame() { state.lastSavedTime = Date.now(); localStorage.setItem('money_farm_neon_water_v1', JSON.stringify(state)); }
 
         function formatMoney(num) { return '$' + num.toLocaleString('en-US'); }
 
@@ -543,131 +501,77 @@
             document.getElementById('balance-display').textContent = formatMoney(state.balance);
             document.getElementById('crystal-display').textContent = state.crystals;
             document.getElementById('energy-display').textContent = `${state.energy}/${MAX_ENERGY}`;
-            
-            let energyPercent = (state.energy / MAX_ENERGY) * 100;
-            document.getElementById('energy-bar-fill').style.width = `${energyPercent}%`;
+            document.getElementById('energy-bar-fill').style.width = `${(state.energy / MAX_ENERGY) * 100}%`;
         }
 
         function useEnergy() {
-            if (state.energy > 0) {
-                state.energy--; updateHUD(); return true;
-            } else {
-                Sfx.play('error');
-                const energyBox = document.querySelector('.box-energy');
-                energyBox.style.borderColor = 'red';
-                energyBox.style.boxShadow = '0 0 20px red';
-                setTimeout(() => {
-                    energyBox.style.borderColor = 'rgba(255,170,0,0.4)';
-                    energyBox.style.boxShadow = '0 0 15px rgba(255,170,0,0.15)';
-                }, 300);
-                return false;
-            }
+            if (state.energy > 0) { state.energy--; updateHUD(); return true; } 
+            else { Sfx.play('error'); return false; }
         }
 
-        function toggleModal(id, show) {
-            Sfx.play('click');
-            document.getElementById(id).classList.toggle('active', show);
-        }
+        function toggleModal(id, show) { Sfx.play('click'); document.getElementById(id).classList.toggle('active', show); }
 
         function buyPremiumPack(packId) {
             if (packId === 'cash_small') { state.balance += 10000; Sfx.play('cash'); }
             else if (packId === 'cash_large') { state.balance += 100000; Sfx.play('cash'); }
             else if (packId === 'gems_small') { state.crystals += 50; Sfx.play('unlock'); }
             else if (packId === 'gems_large') { state.crystals += 500; Sfx.play('unlock'); }
-            
-            updateHUD(); saveGame(); toggleModal('donation-modal', false);
+            updateHUD(); saveCloudData(); toggleModal('donation-modal', false);
         }
 
         function buyBattery() {
             if (state.energy >= MAX_ENERGY) { Sfx.play('error'); return; }
             if (state.crystals >= 5) {
                 state.crystals -= 5; state.energy = MAX_ENERGY; Sfx.play('unlock');
-                updateHUD(); saveGame(); toggleModal('upgrades-modal', false);
-            } else {
-                Sfx.play('error'); toggleModal('upgrades-modal', false); toggleModal('donation-modal', true);
-            }
+                updateHUD(); saveCloudData(); toggleModal('upgrades-modal', false);
+            } else { Sfx.play('error'); }
         }
 
         function buyTimeBoost() {
             if (state.boostTimeLeft > 0) { Sfx.play('error'); return; }
             if (state.crystals >= 15) {
-                state.crystals -= 15; state.boostTimeLeft = 60000;
-                Sfx.play('unlock'); updateHUD(); saveGame();
-                document.getElementById('boost-status-desc').style.color = 'var(--neon-green)';
-                toggleModal('upgrades-modal', false);
-            } else { Sfx.play('error'); toggleModal('upgrades-modal', false); toggleModal('donation-modal', true); }
+                state.crystals -= 15; state.boostTimeLeft = 60000; Sfx.play('unlock');
+                updateHUD(); saveCloudData(); toggleModal('upgrades-modal', false);
+            } else { Sfx.play('error'); }
         }
 
         function getCrystalsToFinish(plot) {
             if (plot.status !== 'growing') return 0;
-            let totalDurationMs = CROPS[plot.cropId].time * 1000;
-            let remainingMs = totalDurationMs - plot.progressMs;
-            if (remainingMs <= 0) return 0;
-            return Math.max(1, Math.ceil(remainingMs / 30000));
+            return Math.max(1, Math.ceil(((CROPS[plot.cropId].time * 1000) - plot.progressMs) / 30000));
         }
 
         function finishInstantlyWithCrystals(id, e) {
             if (e) e.stopPropagation();
-            const plot = state.plots[id];
-            const neededCrystals = getCrystalsToFinish(plot);
-            if (neededCrystals > 0 && state.crystals >= neededCrystals) {
-                state.crystals -= neededCrystals;
-                plot.status = 'ready'; plot.readyTime = Date.now(); plot.waterTimeLeftMs = 0;
-                Sfx.play('unlock'); updateHUD(); drawPlotNode(id); saveGame();
-            } else { Sfx.play('error'); toggleModal('donation-modal', true); }
+            const plot = state.plots[id]; const needed = getCrystalsToFinish(plot);
+            if (needed > 0 && state.crystals >= needed) {
+                state.crystals -= needed; plot.status = 'ready'; plot.readyTime = Date.now(); plot.waterTimeLeftMs = 0;
+                Sfx.play('unlock'); updateHUD(); drawPlotNode(id); saveCloudData();
+            } else { Sfx.play('error'); }
         }
 
-        /* ИНДИВИДУАЛЬНЫЙ ПОЛИВ ГРЯДКИ */
-        function waterPlot(id, e) {
+        function waterPlotAction(id, e) {
             if (e) e.stopPropagation();
             const plot = state.plots[id];
             if (plot.status !== 'growing' || plot.waterTimeLeftMs > 0) return;
-            
-            if (useEnergy()) {
-                plot.waterTimeLeftMs = WATER_DURATION_MS;
-                Sfx.play('unlock'); // Водный/активационный звук
-                saveGame();
-            }
+            if (useEnergy()) { plot.waterTimeLeftMs = WATER_DURATION_MS; Sfx.play('plant'); drawPlotNode(id); saveCloudData(); }
         }
 
         function buildShopUI() {
-            const container = document.getElementById('shop-container');
-            container.innerHTML = '<h2>Магазин & Семена</h2>';
-
+            const container = document.getElementById('shop-container'); container.innerHTML = '<h2>Магазин & Семена</h2>';
             Object.values(CROPS).forEach(crop => {
                 const isUnlocked = state.unlockedCrops.includes(crop.id);
                 const isSelected = state.selectedCrop === crop.id;
-                let lockOverlayHtml = '';
-
-                if (!isUnlocked) {
-                    lockOverlayHtml = `<div class="unlock-overlay"><i class="fa-solid fa-key"></i> ${formatMoney(crop.unlockCost)}</div>`;
-                }
-
                 const item = document.createElement('div');
                 item.className = `seed-item ${isSelected ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}`;
-                item.style.setProperty('--badge-glow', crop.color + '44');
-                
-                item.onclick = () => {
-                    if (isUnlocked) {
-                        Sfx.play('click'); state.selectedCrop = crop.id; buildShopUI(); saveGame();
-                    } else {
-                        if (state.balance >= crop.unlockCost) {
-                            state.balance -= crop.unlockCost; state.unlockedCrops.push(crop.id);
-                            state.selectedCrop = crop.id; Sfx.play('unlock'); updateHUD(); buildShopUI(); saveGame();
-                        } else { Sfx.play('error'); }
-                    }
+                item.style.setProperty('--badge-glow', crop.color + '66');
+                item.onclick = async () => {
+                    if (isUnlocked) { state.selectedCrop = crop.id; buildShopUI(); } 
+                    else if (state.balance >= crop.unlockCost) {
+                        state.balance -= crop.unlockCost; state.unlockedCrops.push(crop.id); state.selectedCrop = crop.id;
+                        Sfx.play('unlock'); updateHUD(); buildShopUI(); saveCloudData();
+                    } else { Sfx.play('error'); }
                 };
-
-                item.innerHTML = `
-                    <div class="seed-main-row">
-                        <div class="seed-icon-badge" style="color:${crop.color}"><i class="fa-solid ${crop.icon}"></i></div>
-                        <div class="seed-details">
-                            <div class="seed-row1"><span>${crop.name}</span><span style="color:var(--neon-gold)">${formatMoney(crop.cost)}</span></div>
-                            <div class="seed-row2"><span>Рост: <strong>${crop.time}с</strong></span><span>Доход: <strong style="color:var(--neon-green)">+${formatMoney(crop.revenue)}</strong></span></div>
-                        </div>
-                    </div>
-                    ${lockOverlayHtml}
-                `;
+                item.innerHTML = `<div class="seed-main-row"><div class="seed-icon-badge" style="color:${crop.color}"><i class="fa-solid ${crop.icon}"></i></div><div class="seed-details"><div class="seed-row1"><span>${crop.name}</span><span style="color:var(--neon-gold)">${formatMoney(crop.cost)}</span></div><div class="seed-row2"><span>Рост: <strong>${crop.time}с</strong></span><span>Доход: <strong style="color:var(--neon-green)">+${formatMoney(crop.revenue)}</strong></span></div></div></div>${!isUnlocked ? `<div class="unlock-overlay"><i class="fa-solid fa-key"></i> ${formatMoney(crop.unlockCost)}</div>` : ''}`;
                 container.appendChild(item);
             });
         }
@@ -683,211 +587,96 @@
         function drawPlotNode(id) {
             const plot = state.plots[id]; const node = document.getElementById(`plot-node-${id}`);
             if (plot.isLocked) {
-                node.className = 'plot-node state-locked';
-                node.innerHTML = `<div class="lock-hud"><i class="fa-solid fa-lock"></i><div class="buy-cost">${formatMoney(PLOT_PRICES[id])}</div></div>`;
-                return;
+                node.className = 'plot-node state-locked'; node.innerHTML = `<div class="lock-hud"><i class="fa-solid fa-lock"></i><div class="buy-cost">${formatMoney(PLOT_PRICES[id])}</div></div>`; return;
             }
             node.className = `plot-node state-${plot.status}`;
-            if (plot.waterTimeLeftMs > 0) node.classList.add('is-watered');
-
-            let cropColorStyle = plot.cropId ? `--crop-color: ${CROPS[plot.cropId].color};` : '';
-            
             let iconHtml = plot.cropId ? `<i class="fa-solid ${CROPS[plot.cropId].icon}"></i>` : '';
             if (plot.status === 'withered') iconHtml = `<i class="fa-solid fa-skull"></i>`;
-
-            node.innerHTML = `
-                <div class="plot-title" id="plot-title-${id}">Пусто</div>
-                <div class="soil-container" id="plot-soil-${id}">
-                    <div class="plant-visual" id="plot-plant-${id}" style="${cropColorStyle}">${iconHtml}</div>
-                </div>
-                <div class="plot-hud">
-                    <div class="hud-text"><span id="plot-percent-${id}">0%</span><span id="plot-time-${id}">Осталось: 0с</span></div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" id="plot-bar-${id}"></div></div>
-                    <div class="plot-action-row" id="plot-action-zone-${id}"></div>
-                </div>
-            `;
+            node.innerHTML = `<div class="plot-title" id="plot-title-${id}">Пусто</div><div class="soil-container" id="plot-soil-${id}"><div class="plant-visual" id="plot-plant-${id}" style="${plot.cropId ? `--crop-color:${CROPS[plot.cropId].color}` : ''}">${iconHtml}</div></div><div class="plot-hud"><div class="hud-text"><span id="plot-percent-${id}">0%</span><span id="plot-time-${id}">Осталось: 0с</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" id="plot-bar-${id}"></div></div><div class="plot-actions-row" id="plot-actions-row-${id}"></div></div>`;
         }
 
-        function handlePlotInteraction(id) {
+        async function handlePlotInteraction(id) {
             const plot = state.plots[id];
             if (plot.isLocked) {
-                if (state.balance >= PLOT_PRICES[id]) {
-                    state.balance -= PLOT_PRICES[id]; plot.isLocked = false; Sfx.play('unlock');
-                    updateHUD(); drawPlotNode(id); saveGame();
-                } else { Sfx.play('error'); } return;
+                if (state.balance >= PLOT_PRICES[id]) { state.balance -= PLOT_PRICES[id]; plot.isLocked = false; Sfx.play('unlock'); updateHUD(); drawPlotNode(id); saveCloudData(); } 
+                else { Sfx.play('error'); } return;
             }
             if (plot.status === 'empty') {
-                const activeCrop = CROPS[state.selectedCrop];
-                if (state.balance >= activeCrop.cost) {
-                    if (!useEnergy()) return;
-                    state.balance -= activeCrop.cost; plot.status = 'growing'; plot.cropId = activeCrop.id; plot.progressMs = 0; plot.waterTimeLeftMs = 0;
-                    Sfx.play('plant'); updateHUD(); drawPlotNode(id); saveGame();
-                } else { Sfx.play('error'); } return;
+                const active = CROPS[state.selectedCrop];
+                if (state.balance >= active.cost && useEnergy()) { state.balance -= active.cost; plot.status = 'growing'; plot.cropId = active.id; plot.progressMs = 0; plot.waterTimeLeftMs = 0; Sfx.play('plant'); drawPlotNode(id); saveCloudData(); } 
+                else { Sfx.play('error'); } return;
             }
             if (plot.status === 'ready') {
-                if (!useEnergy()) return;
-                state.balance += CROPS[plot.cropId].revenue; plot.status = 'empty'; plot.cropId = null; plot.progressMs = 0; plot.readyTime = null; plot.waterTimeLeftMs = 0;
-                Sfx.play('cash'); updateHUD(); drawPlotNode(id); saveGame(); return;
+                if (useEnergy()) { state.balance += CROPS[plot.cropId].revenue; plot.status = 'empty'; plot.cropId = null; plot.progressMs = 0; Sfx.play('cash'); updateHUD(); drawPlotNode(id); saveCloudData(); } return;
             }
-            if (plot.status === 'withered') {
-                if (state.balance >= CLEAR_COST) {
-                    if (!useEnergy()) return;
-                    state.balance -= CLEAR_COST; plot.status = 'empty'; plot.cropId = null; plot.progressMs = 0; plot.readyTime = null; plot.waterTimeLeftMs = 0;
-                    Sfx.play('plant'); updateHUD(); drawPlotNode(id); saveGame();
-                } else { Sfx.play('error'); }
-            }
-        }
-
-        function formatTimeRemaining(seconds) {
-            if (seconds < 60) return `${seconds}с`;
-            let mins = Math.floor(seconds / 60); let secs = seconds % 60;
-            if (mins < 60) return `${mins}м ${secs}с`;
-            let hours = Math.floor(mins / 60); mins = mins % 60;
-            return `${hours}ч ${mins}м`;
+            if (plot.status === 'withered' && state.balance >= CLEAR_COST && useEnergy()) { state.balance -= CLEAR_COST; plot.status = 'empty'; plot.cropId = null; Sfx.play('plant'); updateHUD(); drawPlotNode(id); saveCloudData(); }
         }
 
         function gameProcessingLoop() {
             const now = Date.now(); const deltaTime = now - lastFrameTime; lastFrameTime = now;
-            let globalMultiplier = 1;
+            let globMult = 1;
 
             if (state.energy < MAX_ENERGY) {
-                state.energyTimer += deltaTime;
-                if (state.energyTimer >= ENERGY_REGEN_MS) { state.energy++; state.energyTimer = 0; updateHUD(); }
-            } else { state.energyTimer = 0; }
-
+                state.energyTimer += deltaTime; if (state.energyTimer >= ENERGY_REGEN_MS) { state.energy++; state.energyTimer = 0; updateHUD(); }
+            }
             if (state.boostTimeLeft > 0) {
-                state.boostTimeLeft -= deltaTime; globalMultiplier = 2;
+                state.boostTimeLeft -= deltaTime; globMult = 2;
                 document.getElementById('boost-status-desc').textContent = `АКТИВЕН! Осталось: ${Math.ceil(state.boostTimeLeft / 1000)}с`;
-                if (state.boostTimeLeft <= 0) { state.boostTimeLeft = 0; document.getElementById('boost-status-desc').textContent = 'Ускоряет созревание всех грядок в 2 раза на 1 минуту.'; document.getElementById('boost-status-desc').style.color = '#64748b'; saveGame(); }
+                if (state.boostTimeLeft <= 0) { state.boostTimeLeft = 0; document.getElementById('boost-status-desc').textContent = 'Ускоряет созревание в 2 раза на 1 минуту.'; saveCloudData(); }
             }
 
             for (let i = 1; i <= 12; i++) {
-                const plot = state.plots[i];
-                if (plot.isLocked || plot.status === 'empty') continue;
-
-                const cropConfig = CROPS[plot.cropId];
-                const titleEl = document.getElementById(`plot-title-${i}`);
-                const soilEl = document.getElementById(`plot-soil-${i}`);
-                const percentEl = document.getElementById(`plot-percent-${i}`);
-                const timeEl = document.getElementById(`plot-time-${i}`);
-                const barEl = document.getElementById(`plot-bar-${i}`);
-                const nodeEl = document.getElementById(`plot-node-${i}`);
-                const actionZone = document.getElementById(`plot-action-zone-${i}`);
+                const plot = state.plots[i]; if (plot.isLocked || plot.status === 'empty') continue;
+                const crop = CROPS[plot.cropId];
+                const titleEl = document.getElementById(`plot-title-${i}`); const soilEl = document.getElementById(`plot-soil-${i}`);
+                const percentEl = document.getElementById(`plot-percent-${i}`); const timeEl = document.getElementById(`plot-time-${i}`);
+                const barEl = document.getElementById(`plot-bar-${i}`); const actionsEl = document.getElementById(`plot-actions-row-${i}`);
 
                 if (plot.status === 'withered') {
-                    if (titleEl) titleEl.textContent = "СГОРЕЛО";
-                    if (percentEl) percentEl.textContent = "ERR";
-                    if (timeEl) timeEl.textContent = `Очистить: ${formatMoney(CLEAR_COST)}`;
-                    if (barEl) barEl.style.width = '0%';
-                    if (actionZone) actionZone.innerHTML = '';
-                    continue;
+                    if (titleEl) titleEl.textContent = "СГОРЕЛО"; if (timeEl) timeEl.textContent = `Очистить: ${formatMoney(CLEAR_COST)}`; continue;
                 }
 
-                const totalDurationMs = cropConfig.time * 1000;
-
+                const totalMs = crop.time * 1000;
                 if (plot.status === 'growing') {
-                    let currentPlotMultiplier = globalMultiplier;
+                    let m = globMult; if (plot.waterTimeLeftMs > 0) { plot.waterTimeLeftMs -= deltaTime; m *= 1.3; if (plot.waterTimeLeftMs <= 0) plot.waterTimeLeftMs = 0; }
+                    plot.progressMs += deltaTime * m;
 
-                    // Логика полива: если полито, снижаем таймер воды и даём х1.3 ускорение
-                    if (plot.waterTimeLeftMs > 0) {
-                        plot.waterTimeLeftMs -= deltaTime;
-                        if (plot.waterTimeLeftMs < 0) plot.waterTimeLeftMs = 0;
-                        currentPlotMultiplier *= 1.3;
-                        if (nodeEl && !nodeEl.classList.contains('is-watered')) nodeEl.classList.add('is-watered');
-                    } else {
-                        if (nodeEl && nodeEl.classList.contains('is-watered')) nodeEl.classList.remove('is-watered');
+                    if (actionsEl) {
+                        actionsEl.innerHTML = plot.waterTimeLeftMs > 0 
+                            ? `<button class="btn-water-plot active-water"><i class="fa-solid fa-droplet"></i> ${Math.ceil(plot.waterTimeLeftMs/1000)}с</button>`
+                            : `<button class="btn-water-plot" onclick="waterPlotAction(${i}, event)"><i class="fa-solid fa-droplet"></i> Полить (1⚡)</button>`;
+                        actionsEl.innerHTML += `<button class="btn-skip-donate" onclick="finishInstantlyWithCrystals(${i}, event)"><i class="fa-solid fa-gem"></i> ${getCrystalsToFinish(plot)}</button>`;
                     }
 
-                    plot.progressMs += deltaTime * currentPlotMultiplier;
-                    
-                    let crystalsNeeded = getCrystalsToFinish(plot);
-
-                    // Перерисовка / обновление кнопок Полить и Скип
-                    if (actionZone) {
-                        if (!actionZone.hasChildNodes()) {
-                            actionZone.innerHTML = `
-                                <button class="btn-water" onclick="waterPlot(${i}, event)"></button>
-                                <button class="btn-skip-donate" onclick="finishInstantlyWithCrystals(${i}, event)"></button>
-                            `;
-                        }
-                        
-                        let btnW = actionZone.querySelector('.btn-water');
-                        let btnS = actionZone.querySelector('.btn-skip-donate');
-                        
-                        if (btnW) {
-                            if (plot.waterTimeLeftMs > 0) {
-                                btnW.className = "btn-water water-active";
-                                btnW.innerHTML = `<i class="fa-solid fa-droplet"></i> ${Math.ceil(plot.waterTimeLeftMs / 1000)}с`;
-                            } else {
-                                btnW.className = "btn-water";
-                                btnW.innerHTML = `<i class="fa-solid fa-droplet"></i> Полить`;
-                            }
-                        }
-                        if (btnS) btnS.innerHTML = `<i class="fa-solid fa-gem"></i> ${crystalsNeeded}`;
-                    }
-
-                    if (plot.progressMs >= totalDurationMs) { 
-                        plot.status = 'ready'; plot.readyTime = now; plot.waterTimeLeftMs = 0;
-                        if (nodeEl) { nodeEl.className = 'plot-node state-ready'; nodeEl.classList.remove('is-watered'); }
-                        if (actionZone) actionZone.innerHTML = '';
-                        saveGame(); 
-                    }
+                    if (plot.progressMs >= totalMs) { plot.status = 'ready'; plot.readyTime = now; plot.waterTimeLeftMs = 0; drawPlotNode(i); saveCloudData(); }
                 }
 
                 if (plot.status === 'ready') {
-                    const overDueMs = now - plot.readyTime;
-                    if (overDueMs >= WITHER_TIME_MS) { 
-                        plot.status = 'withered'; 
-                        if (nodeEl) nodeEl.className = 'plot-node state-withered'; 
-                        let plantEl = document.getElementById(`plot-plant-${i}`);
-                        if (plantEl) plantEl.innerHTML = '<i class="fa-solid fa-skull"></i>'; 
-                        if (actionZone) actionZone.innerHTML = '';
-                        Sfx.play('error'); saveGame(); continue; 
-                    }
-                    
-                    const timeRemainingSec = Math.ceil((WITHER_TIME_MS - overDueMs) / 1000);
-
-                    if (titleEl) titleEl.textContent = cropConfig.name;
-                    if (soilEl && !soilEl.classList.contains('stage-5')) soilEl.className = 'soil-container stage-5';
-                    if (percentEl) percentEl.textContent = 'СОЗРЕЛО!';
-                    if (timeEl) timeEl.textContent = `Сгорит: ${formatTimeRemaining(timeRemainingSec)}`;
-                    if (barEl) { barEl.style.width = '100%'; barEl.style.background = 'var(--neon-green)'; barEl.style.boxShadow = '0 0 10px var(--neon-green)'; }
+                    const over = now - plot.readyTime;
+                    if (over >= WITHER_TIME_MS) { plot.status = 'withered'; drawPlotNode(i); saveCloudData(); continue; }
+                    if (titleEl) titleEl.textContent = crop.name; if (percentEl) percentEl.textContent = 'СОЗРЕЛО!'; if (barEl) barEl.style.width = '100%';
                 } else {
-                    const currentPercent = Math.min(100, Math.floor((plot.progressMs / totalDurationMs) * 100));
-                    const remainingSeconds = Math.ceil((totalDurationMs - plot.progressMs) / 1000);
-
-                    let currentStageClass = 'stage-1';
-                    if (currentPercent > 15 && currentPercent <= 40) currentStageClass = 'stage-2';
-                    if (currentPercent > 40 && currentPercent <= 65) currentStageClass = 'stage-3';
-                    if (currentPercent > 65 && currentPercent < 100) currentStageClass = 'stage-4';
-
-                    if (titleEl) titleEl.textContent = cropConfig.name;
-                    if (soilEl) {
-                        // Сохраняем класс влажности, если он нужен
-                        soilEl.className = `soil-container ${currentStageClass}`;
-                    }
-                    if (percentEl) {
-                        percentEl.textContent = `${currentPercent}%` + (plot.waterTimeLeftMs > 0 ? ' ⚡' : '');
-                    }
-                    if (timeEl) timeEl.textContent = `Осталось: ${formatTimeRemaining(remainingSeconds)}`;
-                    if (barEl) { 
-                        barEl.style.width = `${currentPercent}%`; 
-                        barEl.style.background = 'linear-gradient(90deg, var(--neon-blue), var(--neon-green))'; 
-                        barEl.style.boxShadow = '0 0 8px var(--neon-blue)';
-                    }
+                    const pct = Math.min(100, Math.floor((plot.progressMs / totalMs) * 100));
+                    let stage = 'stage-1'; if (pct > 15) stage = 'stage-2'; if (pct > 40) stage = 'stage-3'; if (pct > 65) stage = 'stage-4';
+                    if (titleEl) titleEl.textContent = crop.name; if (percentEl) percentEl.textContent = `${pct}%`; if (barEl) barEl.style.width = `${pct}%`;
+                    if (soilEl) soilEl.className = `soil-container ${stage} ${plot.waterTimeLeftMs > 0 ? 'is-wet' : ''}`;
                 }
             }
         }
 
-        setInterval(saveGame, 5000);
+        // Автосохранение в облако каждые 15 секунд (как резерв)
+        setInterval(saveCloudData, 15000);
 
-        window.onload = () => {
-            loadGame(); updateHUD(); buildShopUI(); buildGridUI();
-            lastFrameTime = Date.now(); setInterval(gameProcessingLoop, 100);
+        window.onload = async () => {
+            // Проверяем, авторизован ли юзер уже
+            const { data } = await supabase.auth.getUser();
+            if (data?.user) {
+                currentUser = data.user;
+                document.getElementById('auth-screen').style.display = 'none';
+                await loadCloudData();
+            }
             
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.addEventListener('click', (e) => { if(e.target === modal) toggleModal(modal.id, false); });
-            });
+            document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', (e) => { if(e.target === m) toggleModal(m.id, false); }); });
         };
     </script>
 </body>
